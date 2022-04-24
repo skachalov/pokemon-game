@@ -1,6 +1,14 @@
 .gameWindow {
     height: 675px;
     width: 675px;
+    padding: 0.5px;
     background: white;
     border: 2px #333333 solid;
+}
+
+.snakeCell {
+    height: 67px;
+    width: 67px;
+    margin-left: 0;
+    transition: .2s;
 }

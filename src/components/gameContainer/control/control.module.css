@@ -1,0 +1,17 @@
+.control {
+    height: 325px;
+    background: #d4d4d4;
+    border: 2px #333333 solid;
+    border-radius: 45%;
+    display: grid;
+    grid-auto-rows: 4fr 4fr 4fr;
+    justify-content: center;
+    justify-items: center;
+    align-items: center;
+}
+
+.horizontalLayer {
+    width: 135%;
+    display: flex;
+    justify-content: space-around;
+}

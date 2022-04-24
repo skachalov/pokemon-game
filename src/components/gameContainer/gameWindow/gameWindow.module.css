@@ -1,0 +1,6 @@
+.gameWindow {
+    height: 675px;
+    width: 675px;
+    background: white;
+    border: 2px #333333 solid;
+}

@@ -1,0 +1,19 @@
+.statistic {
+    margin-bottom: 20px;
+    border: 2px #333333 solid;
+    display: grid;
+    grid-template-columns: 60% 40%;
+}
+
+.value {
+    background: white;
+    padding-right: 5px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.name {
+    font-weight: bold;
+    background: #d4d4d4;
+    padding-left: 5px;
+}

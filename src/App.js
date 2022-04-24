@@ -1,6 +1,6 @@
 import './App.css';
 import Title from "./components/title/title";
-import GameContainer from "./components/gameContainer/gameContainer";
+import GameContainer from "./components/game/gameContainer";
 
 function App() {
     return (

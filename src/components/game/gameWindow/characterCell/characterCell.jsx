@@ -1,5 +1,5 @@
-import React from "react";
-import style from "./characterCell.module.css";
+import React from 'react';
+import style from './characterCell.module.css';
 import Ash from '../../../../assets/ash.png';
 import Pokemon1 from '../../../../assets/pokemons/1.png';
 import Pokemon2 from '../../../../assets/pokemons/2.png';
@@ -51,9 +51,9 @@ const CharacterCell = (props) => {
     }
 
     return (
-        <img className={`${style.character} ${
-            props.transition ? style.characterTransition : ''
-        } ${props.cell.current === 'left' || props.cell.current === 'down' ? style.left : style.right}`}
+        <img className={`${style.character} 
+             ${props.transition ? style.characterTransition : ''} 
+             ${props.cell.current === 'left' || props.cell.current === 'down' ? style.left : style.right}`}
              style={{marginLeft: `${props.cell.x * 67}px`, marginTop: `${props.cell.y * 67}px`}}
              src={img}
         />

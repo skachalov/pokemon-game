@@ -1,7 +1,7 @@
 import React from 'react';
+import style from './controlButton.module.css';
 import {useDispatch} from 'react-redux';
 import {updateDirection} from '../../../../reducer/reducer';
-import style from './controlButton.module.css';
 import {FontAwesomeIcon} from '@fortawesome/react-fontawesome';
 
 const ControlButton = (props) => {

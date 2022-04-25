@@ -1,8 +1,8 @@
 import React, {useState, useEffect} from 'react';
-import { useDispatch } from "react-redux";
-import {updateDirection, updateScore} from "../../../reducer/reducer";
 import style from './gameWindow.module.css';
-import CharacterCell from "./characterCell/characterCell";
+import { useDispatch } from 'react-redux';
+import {updateDirection, updateScore} from '../../../reducer/reducer';
+import CharacterCell from './characterCell/characterCell';
 
 const GameWindow = (props) => {
     let gameInterval;
@@ -34,10 +34,6 @@ const GameWindow = (props) => {
         return {x, y}
     }
 
-    const getAsh = () => {
-        return characters.filter(val => val.id === 0);
-    }
-
     const generatePokemon = () => {
         const img = Math.ceil(Math.random() * 13);
         let x, y;
@@ -50,7 +46,7 @@ const GameWindow = (props) => {
         setPokemon(() => { return { x, y, img } });
     }
 
-    const checkCollision = (Ash) => {
+    const catchPokemon = (Ash) => {
         if (Ash.x === pokemon.x && Ash.y === pokemon.y) {
             setCharacters(() => {
                 const id = characters.length;
@@ -71,43 +67,56 @@ const GameWindow = (props) => {
         }
     }
 
-    const characterMovement = (pos, Ash) => {
+    const lose = () => {
+        clearInterval(gameInterval);
+        setStarted(() => false);
+        setPokemon(() => {});
+        setCharacters(() => []);
+        dispatch(updateScore(0));
+    }
+
+    const characterMovement = (character, Ash) => {
         const direction = props.direction;
 
-        if ((Ash.x < 0 && Ash.current === 'left') ||
-            (Ash.x > 9 && Ash.current === 'right') ||
-            (Ash.y < 0 && Ash.current === 'up') ||
-            (Ash.y > 9 && Ash.current === 'down') ||
-            [...characters].filter(c => c.id !== Ash.id
-                && c.x === Ash.x && c.y === Ash.y).length) {
-            clearInterval(gameInterval);
-            setStarted(() => false);
-            setPokemon(() => {});
-            setCharacters(() => []);
-            dispatch(updateScore(0));
+        // If you run into the tail you will lose
+        if ([...characters].filter(c => c.id !== Ash.id
+            && c.x === Ash.x && c.y === Ash.y).length) {
+            lose();
             return;
         }
 
         setCharacters(() => {
             let nextCoordinates;
-            let current, prev = pos.current;
+            let current, prev = character.current;
 
-            if (pos.id === 0) {
+            // If current character is not Ash, his next direction depends
+            // on step of previous direction of the next character
+            if (character.id === 0) {
                 nextCoordinates = defineCoordinates(direction);
                 current = direction;
             } else {
-                nextCoordinates = defineCoordinates(characters[pos.id - 1].prev);
-                current = characters[pos.id - 1].prev;
+                nextCoordinates = defineCoordinates(characters[character.id - 1].prev);
+                current = characters[character.id - 1].prev;
             }
 
-            let array = characters.filter((val, index) => index !== pos.id);
+            if (characters[character.id].x + nextCoordinates.x > 9 ||
+                characters[character.id].x + nextCoordinates.x < 0 ||
+                characters[character.id].y + nextCoordinates.y > 9 ||
+                characters[character.id].y + nextCoordinates.y < 0) {
+                lose();
+                return;
+            }
+
+            // Get array without current character to correct spread
+            const arrayOfCharacters =
+                characters.filter((val, index) => index !== character.id);
 
             return [
-                ...array,
-                characters[pos.id] = {
-                    ...characters[pos.id],
-                    x: characters[pos.id].x + nextCoordinates.x,
-                    y: characters[pos.id].y + nextCoordinates.y,
+                ...arrayOfCharacters,
+                characters[character.id] = {
+                    ...characters[character.id],
+                    x: characters[character.id].x + nextCoordinates.x,
+                    y: characters[character.id].y + nextCoordinates.y,
                     prev, current
                 }
             ]
@@ -146,16 +155,17 @@ const GameWindow = (props) => {
         generatePokemon();
 
         changeDirection('right');
-        setCharacters([{id: 0, x: 0, y: 0, current: props.direction, prev: undefined, img: 0}]);
+        setCharacters([{id: 0, x: 0, y: 0, current: 'right', prev: undefined, img: 0}]);
     }, [started]);
 
     useEffect(() => {
         if (!started) return;
 
         gameInterval = setInterval(() => {
-            const Ash = getAsh()[0];
+            const Ash = characters.filter(val => val.id === 0)[0];
             [...characters].map(character => characterMovement(character, Ash));
-            checkCollision(Ash);
+
+            catchPokemon(Ash);
         }, 500)
 
         return () => clearInterval(gameInterval);
@@ -173,7 +183,8 @@ const GameWindow = (props) => {
     return (
         <div className={style.gameWindow}>
             {
-                [...characters].map(character => <CharacterCell key={character.id} transition={true} cell={character} />)
+                [...characters].map(character =>
+                    <CharacterCell key={character.id} transition={true} cell={character} />)
             }
             {
                 <CharacterCell cell={pokemon} />

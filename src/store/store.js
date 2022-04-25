@@ -1,5 +1,5 @@
-import { createStore } from "redux";
-import { Reducer } from "../reducer/reducer";
+import { createStore } from 'redux';
+import { Reducer } from '../reducer/reducer';
 
 let store = createStore(Reducer);
 

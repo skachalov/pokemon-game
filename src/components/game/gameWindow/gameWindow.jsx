@@ -42,13 +42,32 @@ const GameWindow = (props) => {
         setPokemon(() => { return { x, y, img } });
     }
 
-    const characterMovement = (pos) => {
+    const checkCollision = (Ash) => {
+        if (Ash.x === pokemon.x && Ash.y === pokemon.y) {
+            setCharacters(() => {
+                const id = characters.length;
+
+                const nextCoordinates = defineCoordinates(characters[id - 1].current)
+
+                const x = characters[id - 1].x - nextCoordinates.x;
+                const y = characters[id - 1].y - nextCoordinates.y;
+                const current = props.direction;
+                const prev = undefined;
+                const img = pokemon.img;
+
+                return [...characters, { id, x, y, current, prev, img }]
+            })
+            setPokemon(() => generatePokemon());
+        }
+    }
+
+    const characterMovement = (pos, Ash) => {
         const direction = props.direction;
 
-        if ((getAsh()[0].x < 0 && getAsh()[0].current === 'left') ||
-            (getAsh()[0].x > 9 && getAsh()[0].current === 'right') ||
-            (getAsh()[0].y < 0 && getAsh()[0].current === 'up') ||
-            (getAsh()[0].y > 9 && getAsh()[0].current === 'down')) {
+        if ((Ash.x < 0 && Ash.current === 'left') ||
+            (Ash.x > 9 && Ash.current === 'right') ||
+            (Ash.y < 0 && Ash.current === 'up') ||
+            (Ash.y > 9 && Ash.current === 'down')) {
             clearInterval(gameInterval);
             return;
         }
@@ -80,13 +99,15 @@ const GameWindow = (props) => {
     }
 
     useEffect(() => {
-        setCharacters([{id: 0, x: 2, y: 0, current: props.direction, prev: undefined, img: 0}]);
         generatePokemon();
+        setCharacters([{id: 0, x: 2, y: 0, current: props.direction, prev: undefined, img: 0}]);
     }, []);
 
     useEffect(() => {
         gameInterval = setInterval(() => {
-            characters.map(character => characterMovement(character));
+            const Ash = getAsh()[0];
+            [...characters].map(character => characterMovement(character, Ash));
+            checkCollision(Ash);
         }, 500)
 
         return () => clearInterval(gameInterval);
@@ -95,7 +116,7 @@ const GameWindow = (props) => {
     return (
         <div className={style.gameWindow}>
             {
-                characters.map(character => <CharacterCell key={character.id} cell={character} />)
+                [...characters].map(character => <CharacterCell key={character.id} cell={character} />)
             }
             {
                 <CharacterCell cell={pokemon} />

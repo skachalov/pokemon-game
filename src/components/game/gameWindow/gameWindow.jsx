@@ -1,9 +1,13 @@
 import React, {useState, useEffect} from 'react';
+import { useDispatch } from "react-redux";
+import { updateScore } from "../../../reducer/reducer";
 import style from './gameWindow.module.css';
 import CharacterCell from "./characterCell/characterCell";
 
 const GameWindow = (props) => {
     let gameInterval;
+    let score = 0;
+    const dispatch = useDispatch();
 
     const [characters, setCharacters] = useState(Array);
     const [pokemon, setPokemon] = useState(Object);
@@ -54,6 +58,8 @@ const GameWindow = (props) => {
                 const current = props.direction;
                 const prev = undefined;
                 const img = pokemon.img;
+
+                dispatch(updateScore(props.score + 1));
 
                 return [...characters, { id, x, y, current, prev, img }]
             })

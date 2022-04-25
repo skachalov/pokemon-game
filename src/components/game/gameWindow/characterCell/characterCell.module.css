@@ -5,5 +5,13 @@
 }
 
 .characterTransition {
-    transition: .2s;
+    transition: margin .2s;
+}
+
+.left {
+    transform: scaleX(-1);
+}
+
+.right {
+    transform: scaleX(1);
 }

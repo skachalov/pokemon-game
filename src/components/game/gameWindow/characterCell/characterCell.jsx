@@ -53,7 +53,7 @@ const CharacterCell = (props) => {
     return (
         <img className={`${style.character} ${
             props.transition ? style.characterTransition : ''
-        }`}
+        } ${props.cell.current === 'left' || props.cell.current === 'down' ? style.left : style.right}`}
              style={{marginLeft: `${props.cell.x * 67}px`, marginTop: `${props.cell.y * 67}px`}}
              src={img}
         />

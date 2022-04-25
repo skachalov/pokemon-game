@@ -6,7 +6,7 @@ const GameWindow = (props) => {
     let gameInterval;
 
     const [characters, setCharacters] = useState(Array);
-    const [lose, setLose] = useState(false);
+    const [pokemon, setPokemon] = useState(Object);
 
     const defineCoordinates = (direction) => {
         let x = 0;
@@ -32,6 +32,14 @@ const GameWindow = (props) => {
 
     const getAsh = () => {
         return characters.filter(val => val.id === 0);
+    }
+
+    const generatePokemon = () => {
+        const img = Math.ceil(Math.random() * 13);
+        const x = Math.floor(Math.random() * 10);
+        const y = Math.floor(Math.random() * 10);
+
+        setPokemon(() => { return { x, y, img } });
     }
 
     const characterMovement = (pos) => {
@@ -65,22 +73,18 @@ const GameWindow = (props) => {
                     ...characters[pos.id],
                     x: characters[pos.id].x + nextCoordinates.x,
                     y: characters[pos.id].y + nextCoordinates.y,
-                    prev: prev,
-                    current: current
+                    prev, current
                 }
             ]
         })
     }
 
     useEffect(() => {
-        setCharacters([{id: 0, x: 2, y: 0, current: props.direction, prev: props.direction},
-            {id: 1, x: 1, y: 0, prev: props.direction, current: props.direction},
-            {id: 2, x: 0, y: 0, prev: props.direction, current: props.direction}]);
+        setCharacters([{id: 0, x: 2, y: 0, current: props.direction, prev: undefined, img: 0}]);
+        generatePokemon();
     }, []);
 
     useEffect(() => {
-
-
         gameInterval = setInterval(() => {
             characters.map(character => characterMovement(character));
         }, 500)
@@ -91,7 +95,10 @@ const GameWindow = (props) => {
     return (
         <div className={style.gameWindow}>
             {
-                characters.map(character => <CharacterCell key={character.id} pos={character} />)
+                characters.map(character => <CharacterCell key={character.id} cell={character} />)
+            }
+            {
+                <CharacterCell cell={pokemon} />
             }
         </div>
     );

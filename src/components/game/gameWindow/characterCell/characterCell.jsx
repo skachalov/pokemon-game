@@ -16,10 +16,9 @@ import Pokemon12 from '../../../../assets/pokemons/12.png';
 import Pokemon13 from '../../../../assets/pokemons/13.png';
 
 const CharacterCell = (props) => {
-    let img;
+    if (props.cell === undefined) return;
 
-    if (props.cell.img === undefined) return;
-    
+    let img;
     switch (props.cell.img) {
         case 0:
             img = Ash; break;

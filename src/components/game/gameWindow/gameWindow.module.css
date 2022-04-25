@@ -1,9 +1,18 @@
-.gameWindow {
+.gameWindow,
+.startWindow {
     height: 675px;
     width: 675px;
     padding: 0.5px;
     background: white;
     border: 2px #333333 solid;
+}
+
+.startWindow {
+    font-weight: bold;
+    font-size: 35px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .snakeCell {

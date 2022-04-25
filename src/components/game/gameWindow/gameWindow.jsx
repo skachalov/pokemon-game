@@ -1,16 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import { useDispatch } from "react-redux";
-import { updateScore } from "../../../reducer/reducer";
+import {updateDirection, updateScore} from "../../../reducer/reducer";
 import style from './gameWindow.module.css';
 import CharacterCell from "./characterCell/characterCell";
 
 const GameWindow = (props) => {
     let gameInterval;
-    let score = 0;
     const dispatch = useDispatch();
 
     const [characters, setCharacters] = useState(Array);
     const [pokemon, setPokemon] = useState(Object);
+    const [started, setStarted] = useState(false);
 
     const defineCoordinates = (direction) => {
         let x = 0;
@@ -75,6 +75,10 @@ const GameWindow = (props) => {
             (Ash.y < 0 && Ash.current === 'up') ||
             (Ash.y > 9 && Ash.current === 'down')) {
             clearInterval(gameInterval);
+            setStarted(() => false);
+            setPokemon(() => {});
+            setCharacters(() => []);
+            dispatch(updateScore(0));
             return;
         }
 
@@ -104,12 +108,44 @@ const GameWindow = (props) => {
         })
     }
 
-    useEffect(() => {
-        generatePokemon();
-        setCharacters([{id: 0, x: 2, y: 0, current: props.direction, prev: undefined, img: 0}]);
-    }, []);
+    const changeDirection = (direction) => {
+        dispatch(updateDirection(direction));
+    }
 
     useEffect(() => {
+        window.addEventListener('keydown', event => {
+            switch (event.keyCode) {
+                case 38:
+                    changeDirection('up');
+                    break;
+                case 39:
+                    changeDirection('right');
+                    break;
+                case 40:
+                    changeDirection('down');
+                    break;
+                case 37:
+                    changeDirection('left');
+                    break;
+                case 32:
+                    setStarted(() => true);
+                    break;
+            }
+        })
+    }, [])
+
+    useEffect(() => {
+        if (!started) return;
+
+        generatePokemon();
+
+        changeDirection('right');
+        setCharacters([{id: 0, x: 0, y: 0, current: props.direction, prev: undefined, img: 0}]);
+    }, [started]);
+
+    useEffect(() => {
+        if (!started) return;
+
         gameInterval = setInterval(() => {
             const Ash = getAsh()[0];
             [...characters].map(character => characterMovement(character, Ash));
@@ -118,6 +154,15 @@ const GameWindow = (props) => {
 
         return () => clearInterval(gameInterval);
     }, [characters]);
+
+
+    if (!started) {
+        return (
+            <div className={style.startWindow}>
+                Press  Space  to start the game
+            </div>
+        );
+    }
 
     return (
         <div className={style.gameWindow}>

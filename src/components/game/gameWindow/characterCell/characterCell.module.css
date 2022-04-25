@@ -2,5 +2,8 @@
     height: 67px;
     width: 67px;
     position: absolute;
+}
+
+.characterTransition {
     transition: .2s;
 }

@@ -40,8 +40,12 @@ const GameWindow = (props) => {
 
     const generatePokemon = () => {
         const img = Math.ceil(Math.random() * 13);
-        const x = Math.floor(Math.random() * 10);
-        const y = Math.floor(Math.random() * 10);
+        let x, y;
+
+        do {
+            x = Math.floor(Math.random() * 10);
+            y = Math.floor(Math.random() * 10);
+        } while([...characters].filter(c => c.x === x && c.y === y).length);
 
         setPokemon(() => { return { x, y, img } });
     }
@@ -73,7 +77,9 @@ const GameWindow = (props) => {
         if ((Ash.x < 0 && Ash.current === 'left') ||
             (Ash.x > 9 && Ash.current === 'right') ||
             (Ash.y < 0 && Ash.current === 'up') ||
-            (Ash.y > 9 && Ash.current === 'down')) {
+            (Ash.y > 9 && Ash.current === 'down') ||
+            [...characters].filter(c => c.id !== Ash.id
+                && c.x === Ash.x && c.y === Ash.y).length) {
             clearInterval(gameInterval);
             setStarted(() => false);
             setPokemon(() => {});
@@ -167,7 +173,7 @@ const GameWindow = (props) => {
     return (
         <div className={style.gameWindow}>
             {
-                [...characters].map(character => <CharacterCell key={character.id} cell={character} />)
+                [...characters].map(character => <CharacterCell key={character.id} transition={true} cell={character} />)
             }
             {
                 <CharacterCell cell={pokemon} />
